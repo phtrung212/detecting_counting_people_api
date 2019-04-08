@@ -1,0 +1,16 @@
+{
+  "db": {
+    "name": "db",
+    "connector": "memory"
+  },
+  "mongodb": {
+    "host": "ds121636.mlab.com",
+    "port": 21636,
+    "url": "mongodb://admin1:12345T@ds121636.mlab.com:21636/datn-api",
+    "database": "datn-api",
+    "password": "12345T",
+    "name": "mongodb",
+    "user": "admin1",
+    "connector": "mongodb"
+  }
+}
