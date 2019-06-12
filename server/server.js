@@ -2,9 +2,14 @@
 
 var loopback = require('loopback');
 var boot = require('loopback-boot');
+var bodyParser  = require('body-parser');
 
 var app = module.exports = loopback();
 
+
+// I used an mlab Sandbox DB. Substitute the details with your own
+const url = 'mongodb://admin1:12345T@ds121636.mlab.com:21636/datn-api';
+const dbName = 'datn-api';
 app.start = function() {
   // start the web server
   return app.listen(function() {
@@ -27,3 +32,5 @@ boot(app, __dirname, function(err) {
   if (require.main === module)
     app.start();
 });
+
+

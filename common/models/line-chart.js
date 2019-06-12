@@ -34,6 +34,39 @@ module.exports = function(Linechart) {
       cb(null, value);
     });
   };
+  Linechart.getReportRangeDay = function(day, month, year, dayTo, monthTo, yearTo, cameras, cb) {
+    let listCamera = [];
+    cameras.forEach(function(camera) {
+      listCamera.push(camera);
+    });
+    let value = {
+      in: [],
+      out: [],
+      total: [],
+    };
+    for (let i = 0; i < dayTo-day+1; i++) {
+      value.in[i] = 0;
+      value.out[i] = 0;
+      value.total[i] = 0;
+    }
+    Linechart.find({
+      where: {
+        day: {between: [day, dayTo]},
+        month: {between: [month, monthTo]},
+        year: {between: [year, yearTo]},
+        cameraName: {inq: cameras},
+      },
+    }, function(err, listReport) {
+      console.log('listReportMultiCam', listReport);
+      console.log('cameras', cameras[0]);
+      for (let i = 0; i < listReport.length; i++) {
+        value.in[listReport[i].day-day] += listReport[i].in;
+        value.out[listReport[i].day-day] += listReport[i].out;
+        value.total[listReport[i].day-day] += listReport[i].in + listReport[i].out;
+      }
+      cb(null, value);
+    });
+  };
   Linechart.getReportMonth = function(month, year, cameras, cb) {
     let value = {
       in: [],
@@ -145,6 +178,21 @@ module.exports = function(Linechart) {
         {arg: 'cameras', type: 'array', http: {source: 'query'}}],
 
       returns: {arg: 'data', type: 'Object'},
+    }
+  );
+  Linechart.remoteMethod(
+    'getReportRangeDay',
+    {
+      http: {path: '/get-reports-range-of-day', verb: 'get'},
+      accepts: [{arg: 'day', type: 'number', http: {source: 'query'}},
+        {arg: 'month', type: 'number', http: {source: 'query'}},
+        {arg: 'year', type: 'number', http: {source: 'query'}},
+        {arg: 'dayTo', type: 'number', http: {source: 'query'}},
+        {arg: 'monthTo', type: 'number', http: {source: 'query'}},
+        {arg: 'yearTo', type: 'number', http: {source: 'query'}},
+        {arg: 'cameras', type: 'array', http: {source: 'query'}}],
+
+      returns: {arg: 'listReport', type: 'Object'},
     }
   );
 };

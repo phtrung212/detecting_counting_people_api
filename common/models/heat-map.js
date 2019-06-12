@@ -8,9 +8,9 @@ module.exports = function(heatMap) {
       value: [],
     };
     for (let i = 0; i < 24; i++)    {
-      data.x[i] = 0;
-      data.y[i] = 0;
-      data.value[i] = 0;
+      data.x[i] = [];
+      data.y[i] = [];
+      data.value[i] = [];
     }
     heatMap.find({where: {
       day: day,
@@ -19,10 +19,42 @@ module.exports = function(heatMap) {
       cameraName: {inq: cameras},
     }}, function(err, listReport) {
       for (let i = 0; i < listReport.length; i++)      {
-        data.x[listReport[i].hour] += listReport[i].x;
-        data.y[listReport[i].hour] += listReport[i].y;
-        data.value[listReport[i].hour] += listReport[i].value;
+        data.x[listReport[i].hour] =
+          [...data.x[listReport[i].hour], ...listReport[i].x];
+        data.y[listReport[i].hour] =
+          [...data.y[listReport[i].hour], ...listReport[i].y];
+        data.value[listReport[i].hour] =
+          [...data.value[listReport[i].hour], ...listReport[i].value];
       }
+      cb(null, data);
+    });
+  };
+  heatMap.getReportRangeDay = function(day, month, year, dayTo, monthTo, yearTo, cameras, cb) {
+    let data = {
+      x: [],
+      y: [],
+      value: [],
+    };
+    for (let i = 0; i < dayTo - day + 1; i++)    {
+      data.x[i] = [];
+      data.y[i] = [];
+      data.value[i] = [];
+    }
+    heatMap.find({where: {
+      day: {between: [day, dayTo]},
+      month: {between: [month, monthTo]},
+      year: {between: [year, yearTo]},
+      cameraName: {inq: cameras},
+    }}, function(err, listReport) {
+      for (let i = 0; i < listReport.length; i++)      {
+        data.x[listReport[i].day - day] =
+          [...data.x[listReport[i].day - day], ...listReport[i].x];
+        data.y[listReport[i].day - day] =
+          [...data.y[listReport[i].day - day], ...listReport[i].y];
+        data.value[listReport[i].day - day] =
+          [...data.value[listReport[i].day - day], ...listReport[i].value];
+      }
+      console.log('dataAPI', data);
       cb(null, data);
     });
   };
@@ -97,6 +129,21 @@ module.exports = function(heatMap) {
       http: {path: '/get-reports-year', verb: 'get'},
       accepts: [
         {arg: 'year', type: 'number', http: {source: 'query'}},
+        {arg: 'cameras', type: 'array', http: {source: 'query'}}],
+
+      returns: {arg: 'listReport', type: 'Object'},
+    }
+  );
+  heatMap.remoteMethod(
+    'getReportRangeDay',
+    {
+      http: {path: '/get-reports-range-of-day', verb: 'get'},
+      accepts: [{arg: 'day', type: 'number', http: {source: 'query'}},
+        {arg: 'month', type: 'number', http: {source: 'query'}},
+        {arg: 'year', type: 'number', http: {source: 'query'}},
+        {arg: 'dayTo', type: 'number', http: {source: 'query'}},
+        {arg: 'monthTo', type: 'number', http: {source: 'query'}},
+        {arg: 'yearTo', type: 'number', http: {source: 'query'}},
         {arg: 'cameras', type: 'array', http: {source: 'query'}}],
 
       returns: {arg: 'listReport', type: 'Object'},
