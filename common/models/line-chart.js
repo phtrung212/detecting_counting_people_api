@@ -24,8 +24,8 @@ module.exports = function(Linechart) {
         cameraName: {inq: cameras},
       },
     }, function(err, listReport) {
-      console.log('listReportMultiCam', listReport);
-      console.log('cameras', cameras[0]);
+      //console.log('listReportMultiCam', listReport);
+      //console.log('cameras', cameras[0]);
       for (let i = 0; i < listReport.length; i++) {
         value.in[listReport[i].hour] += listReport[i].in;
         value.out[listReport[i].hour] += listReport[i].out;
@@ -57,8 +57,8 @@ module.exports = function(Linechart) {
         cameraName: {inq: cameras},
       },
     }, function(err, listReport) {
-      console.log('listReportMultiCam', listReport);
-      console.log('cameras', cameras[0]);
+      //console.log('listReportMultiCam', listReport);
+      //.log('cameras', cameras[0]);
       for (let i = 0; i < listReport.length; i++) {
         value.in[listReport[i].day-day] += listReport[i].in;
         value.out[listReport[i].day-day] += listReport[i].out;

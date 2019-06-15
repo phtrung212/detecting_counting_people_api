@@ -47,14 +47,20 @@ module.exports = function(heatMap) {
       cameraName: {inq: cameras},
     }}, function(err, listReport) {
       for (let i = 0; i < listReport.length; i++)      {
-        data.x[listReport[i].day - day] =
-          [...data.x[listReport[i].day - day], ...listReport[i].x];
-        data.y[listReport[i].day - day] =
-          [...data.y[listReport[i].day - day], ...listReport[i].y];
-        data.value[listReport[i].day - day] =
-          [...data.value[listReport[i].day - day], ...listReport[i].value];
+        if (data.x[listReport[i].day - day].length === 0)        {
+          data.x[listReport[i].day - day] =
+            [...data.x[listReport[i].day - day], ...listReport[i].x];
+          data.y[listReport[i].day - day] =
+            [...data.y[listReport[i].day - day], ...listReport[i].y];
+          data.value[listReport[i].day - day] =
+            [...data.value[listReport[i].day - day], ...listReport[i].value];
+        } else        {
+          for (let j = 0; j < data.x[listReport[i].day - day].length; j++)          {
+            data.value[listReport[i].day - day][j] += listReport[i].value[j];
+          }
+        }
       }
-      console.log('dataAPI', data);
+      // console.log('dataAPI', data);
       cb(null, data);
     });
   };
@@ -64,16 +70,28 @@ module.exports = function(heatMap) {
       y: [],
       value: [],
     };
+    for (let i = 0; i < 31; i++)    {
+      data.x[i] = [];
+      data.y[i] = [];
+      data.value[i] = [];
+    }
     heatMap.find({where: {
       month: month,
       year: year,
       cameraName: {inq: cameras},
     }}, function(err, listReport) {
-      for (let i = 0; i < listReport.length; i++) {
-        for (let j = 0; j < listReport[i].x.length; j++)        {
-          data.x.push(listReport[i].x[j]);
-          data.y.push(listReport[i].y[j]);
-          data.value.push(listReport[i].value[j]);
+      for (let i = 0; i < listReport.length; i++)      {
+        if (data.x[listReport[i].day - 1].length === 0) {
+          data.x[listReport[i].day - 1] =
+            [...data.x[listReport[i].day - 1], ...listReport[i].x];
+          data.y[listReport[i].day - 1] =
+            [...data.y[listReport[i].day - 1], ...listReport[i].y];
+          data.value[listReport[i].day - 1] =
+            [...data.value[listReport[i].day - 1], ...listReport[i].value];
+        } else {
+          for (let j = 0; j < data.x[listReport[i].day - 1].length; j++)          {
+            data.value[listReport[i].day - 1][j] += listReport[i].value[j];
+          }
         }
       }
       cb(null, data);
@@ -85,15 +103,27 @@ module.exports = function(heatMap) {
       y: [],
       value: [],
     };
+    for (let i = 0; i < 12; i++)    {
+      data.x[i] = [];
+      data.y[i] = [];
+      data.value[i] = [];
+    }
     heatMap.find({where: {
       year: year,
       cameraName: {inq: cameras},
     }}, function(err, listReport) {
-      for (let i = 0; i < listReport.length; i++) {
-        for (let j = 0; j < listReport[i].x.length; j++)        {
-          data.x.push(listReport[i].x[j]);
-          data.y.push(listReport[i].y[j]);
-          data.value.push(listReport[i].value[j]);
+      for (let i = 0; i < listReport.length; i++)      {
+        if (data.x[listReport[i].month - 1].length === 0) {
+          data.x[listReport[i].month - 1] =
+            [...data.x[listReport[i].month - 1], ...listReport[i].x];
+          data.y[listReport[i].month - 1] =
+            [...data.y[listReport[i].month - 1], ...listReport[i].y];
+          data.value[listReport[i].month - 1] =
+            [...data.value[listReport[i].month - 1], ...listReport[i].value];
+        } else {
+          for (let j = 0; j < data.x[listReport[i].month - 1].length; j++)          {
+            data.value[listReport[i].month - 1][j] += listReport[i].value[j];
+          }
         }
       }
       cb(null, data);
