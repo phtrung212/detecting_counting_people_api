@@ -24,8 +24,8 @@ module.exports = function(Linechart) {
         cameraName: {inq: cameras},
       },
     }, function(err, listReport) {
-      //console.log('listReportMultiCam', listReport);
-      //console.log('cameras', cameras[0]);
+      // console.log('listReportMultiCam', listReport);
+      // console.log('cameras', cameras[0]);
       for (let i = 0; i < listReport.length; i++) {
         value.in[listReport[i].hour] += listReport[i].in;
         value.out[listReport[i].hour] += listReport[i].out;
@@ -44,7 +44,7 @@ module.exports = function(Linechart) {
       out: [],
       total: [],
     };
-    for (let i = 0; i < dayTo-day+1; i++) {
+    for (let i = 0; i < dayTo - day + 1; i++) {
       value.in[i] = 0;
       value.out[i] = 0;
       value.total[i] = 0;
@@ -57,12 +57,12 @@ module.exports = function(Linechart) {
         cameraName: {inq: cameras},
       },
     }, function(err, listReport) {
-      //console.log('listReportMultiCam', listReport);
-      //.log('cameras', cameras[0]);
+      // console.log('listReportMultiCam', listReport);
+      // .log('cameras', cameras[0]);
       for (let i = 0; i < listReport.length; i++) {
-        value.in[listReport[i].day-day] += listReport[i].in;
-        value.out[listReport[i].day-day] += listReport[i].out;
-        value.total[listReport[i].day-day] += listReport[i].in + listReport[i].out;
+        value.in[listReport[i].day - day] += listReport[i].in;
+        value.out[listReport[i].day - day] += listReport[i].out;
+        value.total[listReport[i].day - day] += listReport[i].in + listReport[i].out;
       }
       cb(null, value);
     });
@@ -136,6 +136,37 @@ module.exports = function(Linechart) {
       cb(null, value);
     });
   };
+  Linechart.getLastDayProcessed = function(cameras, cb) {
+    Linechart.find({
+      where: {
+        cameraName: {inq: cameras},
+      },
+      order: '_id DESC',
+    }, function(err, listReport) {
+      // console.log(listReport);
+      let value = [];
+      for (let i = 0; i < cameras.length; i++)
+        value[i] = [];
+      /* let listCamera = [];
+      for (let j = 0; j < cameras.length; j++)      {
+        console.log('camera name',cameras)
+        listCamera.push(cameras[j]);
+      } */
+      for (let i = 0; i < listReport.length; i++) {
+        if (value[cameras.indexOf(listReport[i].cameraName)].length === 0)        {
+          // console.log('true');
+          console.log('if index', cameras.indexOf(listReport[i].cameraName));
+          value[cameras.indexOf(listReport[i].cameraName)] = listReport[i];
+        } else {
+          if (listReport[i].day === value[cameras.indexOf(listReport[i].cameraName)].day) {
+            value[cameras.indexOf(listReport[i].cameraName)].in += listReport[i].in;
+            value[cameras.indexOf(listReport[i].cameraName)].out += listReport[i].out;
+          }
+        }
+      }
+      cb(null, value);
+    });
+  };
   Linechart.remoteMethod(
     'getReportDay',
     {
@@ -174,6 +205,16 @@ module.exports = function(Linechart) {
     'checkDayProcessed',
     {
       http: {path: '/check-day-processed', verb: 'get'},
+      accepts: [
+        {arg: 'cameras', type: 'array', http: {source: 'query'}}],
+
+      returns: {arg: 'data', type: 'Object'},
+    }
+  );
+  Linechart.remoteMethod(
+    'getLastDayProcessed',
+    {
+      http: {path: '/getLastDayProcessed', verb: 'get'},
       accepts: [
         {arg: 'cameras', type: 'array', http: {source: 'query'}}],
 
