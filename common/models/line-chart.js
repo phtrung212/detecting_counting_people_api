@@ -158,7 +158,9 @@ module.exports = function(Linechart) {
           console.log('if index', cameras.indexOf(listReport[i].cameraName));
           value[cameras.indexOf(listReport[i].cameraName)] = listReport[i];
         } else {
-          if (listReport[i].day === value[cameras.indexOf(listReport[i].cameraName)].day) {
+          if (listReport[i].day === value[cameras.indexOf(listReport[i].cameraName)].day &&
+            listReport[i].month === value[cameras.indexOf(listReport[i].cameraName)].month &&
+            listReport[i].year === value[cameras.indexOf(listReport[i].cameraName)].year) {
             value[cameras.indexOf(listReport[i].cameraName)].in += listReport[i].in;
             value[cameras.indexOf(listReport[i].cameraName)].out += listReport[i].out;
           }
