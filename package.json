@@ -17,7 +17,7 @@
     "cors": "^2.5.2",
     "express-async-await": "^1.1.0",
     "helmet": "^3.10.0",
-    "loopback": "^3.22.0",
+    "loopback": "^3.25.1",
     "loopback-boot": "^2.6.5",
     "loopback-component-explorer": "^6.2.0",
     "loopback-connector-mongodb": "^4.0.0",
